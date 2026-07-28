@@ -50,7 +50,7 @@
                     <p>1ère année cycle Ingénieur — ENSAJ</p>
                 </div>
                 <div class="stat-card">
-                    <h3>3+</h3>
+                    <h3 id="repo-count">3+</h3>
                     <p>Projets full-stack</p>
                 </div>
                 <div class="stat-card">
@@ -165,6 +165,40 @@
                         <span class="tag">MySQL</span>
                     </div>
                 </article>
+
+                <article class="project-card">
+                    <div class="project-head">
+                        <h3>Calculatrice Scientifique</h3>
+                        <span class="project-tech">HTML / CSS / JS</span>
+                    </div>
+                    <p>
+                        Calculatrice interactive avec fonctions mathématiques avancées (opérations
+                        scientifiques, trigonométrie), interface soignée en HTML/CSS et logique de calcul
+                        en JavaScript pur, sans framework.
+                    </p>
+                    <div class="tags">
+                        <span class="tag">HTML</span>
+                        <span class="tag">CSS</span>
+                        <span class="tag">JavaScript</span>
+                    </div>
+                </article>
+
+                <article class="project-card">
+                    <div class="project-head">
+                        <h3>Calculatrice Standard</h3>
+                        <span class="project-tech">HTML / CSS / JS</span>
+                    </div>
+                    <p>
+                        Calculatrice responsive gérant les quatre opérations arithmétiques de base,
+                        construite en HTML, CSS et JavaScript vanilla — exercice de fondation sur la
+                        manipulation du DOM et la logique événementielle.
+                    </p>
+                    <div class="tags">
+                        <span class="tag">HTML</span>
+                        <span class="tag">CSS</span>
+                        <span class="tag">JavaScript</span>
+                    </div>
+                </article>
             </div>
         </section>
     </main>
@@ -180,6 +214,33 @@
         </div>
         <p class="foot-note">$ connection closed — merci de votre visite.</p>
     </footer>
+
+    <script>
+        // Compte automatiquement le nombre de repos publics GitHub (hors forks)
+        // et met à jour la stat-card "Projets full-stack" à chaque chargement de la page.
+        (async function updateProjectCount() {
+            const GITHUB_USERNAME = "dihimanas66";
+            const statEl = document.getElementById("repo-count");
+            if (!statEl) return;
+
+            try {
+                const res = await fetch(
+                    `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100`
+                );
+                if (!res.ok) throw new Error(`GitHub API status ${res.status}`);
+
+                const repos = await res.json();
+
+                // On ne compte que les vrais projets (pas les forks des autres)
+                const ownProjectsCount = repos.filter(repo => !repo.fork).length;
+
+                statEl.textContent = `${ownProjectsCount}+`;
+            } catch (err) {
+                // En cas d'erreur (offline, rate-limit GitHub...) on garde la valeur statique
+                console.warn("Impossible de récupérer le nombre de repos GitHub :", err);
+            }
+        })();
+    </script>
 
 </body>
 </html>
